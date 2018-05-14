@@ -1,0 +1,20 @@
+{
+  "name": "ebay_search",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index && cd client && npm start",
+    "build": "cd client && npm run build && cd .. && node index"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "body-parser": "^1.18.2",
+    "express": "^4.16.3",
+    "request": "^2.85.0",
+    "socket.io": "^2.1.0"
+  }
+}
