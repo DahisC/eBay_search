@@ -1,97 +1,121 @@
 import axios from 'axios';
 import React from 'react';
-import { Input, Button, Icon, Modal, Popup } from 'semantic-ui-react';
+import {
+  Grid,
+  Input,
+  Button,
+  Icon,
+  Modal,
+  Popup,
+  Segment,
+} from 'semantic-ui-react';
 
-class CategoryButton extends React.Component {
-    state = {
-        modalOpen: false,
-        inputCategoryID: '',
-    }
+const SettingButton = (props) => (
+  <Button icon color="blue" onClick={props.handleSearch} size="big">
+    <Icon name="setting" />
+  </Button>
+);
 
-    componentDidUpdate() {
-        console.log(this.state);
-    }
-
-    // 從伺服器取得 Category List
-    componentDidMount() {
-        axios.get('/api/readEbayCategory').then((res) => {
-            res.data.eBayCategory.forEach(c => {
-                c.text = c.CategoryName;
-                c.value = c.CategoryID;
-            })
-            this.setState({
-                category: res.data.eBayCategory,
-                levelOne: res.data.eBayCategory.filter(c => c.CategoryLevel == 1),
-            })
-        });
-    }
-
-    handleModalOpen = () => this.setState({ modalOpen: true, inputCategoryID: '' });
-    handleModalClose = () => this.setState({ modalOpen: false });
-
-    render() {
-        return (
-            <React.Fragment>
-                <Button inverted color="blue" onClick={this.handleModalOpen}>分類</Button>
-                <Modal size="tiny" open={this.state.modalOpen}>
-                    <Modal.Header>
-                        <Icon name="tag" /> 選擇分類
-                    </Modal.Header>
-                    <Modal.Content>
-                        <Input placeholder="分類編號" />
-                    </Modal.Content>
-                    <Modal.Actions>
-                        <Button inverted color="red" onClick={this.handleModalClose}>取消</Button>
-                        <Button inverted color="green">確認</Button>
-                    </Modal.Actions>
-                </Modal>
-            </React.Fragment>
-        )
-    }
-}
-
-const SearchButton = props => (
-    <Button
-        icon
-        inverted
-        color="blue"
-        onClick={props.handleSearch}
-    >
-        <Icon name="search"/>
-    </Button>
+const SearchButton = (props) => (
+  <Button
+    icon
+    color="blue"
+    onClick={props.handleSearch}
+    size="big"
+    loading={props.isSearching}
+    disabled={props.isSearching}
+  >
+    <Icon name="search" />
+  </Button>
 );
 
 class SearchBar extends React.Component {
-    state = {
-        sellerID: 'leperfect',
-        catetoryID: '281',
-    }
+  state = {
+    isSearching: false,
+    itemArray: [],
+    itemTotal: 0,
+    itemOffset: 0,
+  };
 
-    handleSellerID = (e) => this.setState({ sellerID: e.target.value });
-    handleSearch = () => {
-        axios.post(
-            '/api/search',
-            {
-                sellerID: this.state.sellerID,
-                categoryID: this.state.catetoryID,
-            }
-        ).then((res) => { console.log(res); });
-    }
+  componentDidUpdate() {
+    console.log('==');
+    console.log(this.state);
+  }
 
-    render() {
-        return (
-            <Input
-                action
-                placeholder="eBay Seller ID"
-                value={this.state.sellerID}
-                onChange={this.handleSellerID}
-            >
-                <input />
-                <CategoryButton />
-                <SearchButton handleSearch={this.handleSearch} />
-            </Input>
+  handleSellerID = (e) => this.setState({ sellerID: e.target.value });
+  handleSearch = () => {
+    this.setState({
+      isSearching: true,
+      itemArray: [],
+    });
+    const category_ids = '281';
+
+    // Filter
+    // { = %7B
+    // } = %7D
+    const sellers = '%7Bleperfect%7D';
+    const deliveryPostalCode = '19713';
+    const deliveryCountry = 'US';
+    const buyingOptions = '%7BFIXED_PRICE%7D';
+    const filter = `sellers:${sellers},deliveryPostalCode:${deliveryPostalCode},deliveryCountry:${deliveryCountry},buyingOptions:${buyingOptions}`;
+
+    const search = (offset = 0) => {
+      axios
+        .get(
+          `https://api.ebay.com/buy/browse/v1/item_summary/search?limit=200&offset=${offset}&category_ids=${category_ids}&filter=${filter}`,
+          {
+            headers: {
+              Authorization: `Bearer ${this.props.accessToken}`,
+            },
+          },
         )
-    }
+        .then((res) => {
+          this.props.handleItemTotal(res.data.total);
+          this.props.handleItemArray(res.data.itemSummaries);
+          this.setState({
+            itemArray: [...this.state.itemArray, ...res.data.itemSummaries],
+          });
+          if (
+            res.data.offset + res.data.itemSummaries.length <
+            res.data.total
+          ) {
+            search(res.data.offset + res.data.itemSummaries.length);
+          } else {
+            this.setState({
+              isSearching: false,
+            });
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    };
+
+    search();
+  };
+
+  render() {
+    return (
+      <Grid.Row style={{ height: '30%' }}>
+        <Grid.Column verticalAlign="middle">
+          <Input
+            action
+            placeholder="eBay Seller ID"
+            value={this.state.sellerID}
+            onChange={this.handleSellerID}
+            size="big"
+          >
+            <input />
+            <SettingButton />
+            <SearchButton
+              handleSearch={this.handleSearch}
+              isSearching={this.state.isSearching}
+            />
+          </Input>
+        </Grid.Column>
+      </Grid.Row>
+    );
+  }
 }
 
 export default SearchBar;

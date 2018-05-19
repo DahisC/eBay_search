@@ -1,5 +1,9 @@
-const eBayCategoryList = require('./eBayCategoryList.js').GetCategoriesResponse.CategoryArray.Category;
+const eBayCategoryList = require('./eBayCategoryList.js').GetCategoriesResponse
+  .CategoryArray.Category;
 const eBayBrowseAPI = require('./eBayBrowseAPI.js');
+const getSessionID = require('./getSessionID');
+const fetchToken = require('./fetchToken');
+const getOauthToken = require('./getOauthTokenAPI');
 
 // const eBayCategory = new Object({
 //     levelOne: () => eBayCategoryList.filter(category => category.CategoryLevel == 1),
@@ -11,6 +15,9 @@ const eBayBrowseAPI = require('./eBayBrowseAPI.js');
 // });
 
 module.exports = {
-    readEbayCategory: () => eBayCategoryList,
-    // search: () => eBayBrowseAPI(),
-}
+  readEbayCategory: () => eBayCategoryList,
+  getSessionID: () => getSessionID(),
+  fetchToken: (sessionID) => fetchToken(sessionID),
+  getOauthToken: (authCode) => getOauthToken(authCode),
+  // search: () => eBayBrowseAPI(),
+};
