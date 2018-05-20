@@ -19,20 +19,6 @@ class SearchPage extends React.Component {
     itemTotal: 0,
   };
 
-  shouldComponentUpdate(nextProps, nextState) {
-    if (
-      this.state.itemArray !== nextState.itemArray ||
-      this.state.itemTotal !== nextState.itemTotal
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  componentDidUpdate() {
-    console.log(this.state);
-  }
-
   componentDidMount() {
     this.setState({ isLoading: true });
     const authCode = this.props.location.search.split('?code=')[1];
@@ -54,13 +40,11 @@ class SearchPage extends React.Component {
   }
 
   handleItemArray = (itemArray) => {
-    console.log(`我收到ㄉ ${itemArray.length}`);
-    this.setState({ itemArray: [...this.state.itemArray, ...itemArray] });
+    this.setState({ itemArray });
   };
   handleItemTotal = (itemTotal) => this.setState({ itemTotal: itemTotal });
 
   render() {
-    console.log(1);
     return (
       <Grid centered style={{ height: '100vh' }}>
         {this.state.isLoading === true && (

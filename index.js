@@ -8,6 +8,8 @@ const port = 9001;
 const API = require('./APIs/API');
 const axios = require('axios');
 
+app.use(express.json({ limit: '500mb' }));
+
 const cors = require('cors');
 app.use(cors());
 
@@ -48,6 +50,19 @@ app.post('/api/getOauthToken', async (req, res) => {
   try {
     const getOauthToken = await API.getOauthToken(req.body.authCode);
     res.json(getOauthToken);
+  } catch (err) {
+    res.json(err);
+  }
+});
+
+app.post('/api/convertImage', async (req, res) => {
+  console.log('/api/convertImage');
+  console.log(req.body.itemArray.length);
+  //console.log(req.body);
+
+  try {
+    const convertImage = await API.convertImage(req.body.itemArray);
+    res.json(convertImage);
   } catch (err) {
     res.json(err);
   }

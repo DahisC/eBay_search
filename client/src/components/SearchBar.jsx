@@ -10,11 +10,7 @@ import {
   Segment,
 } from 'semantic-ui-react';
 
-const SettingButton = (props) => (
-  <Button icon color="blue" onClick={props.handleSearch} size="big">
-    <Icon name="setting" />
-  </Button>
-);
+import SettingButton from './SettingButton';
 
 const SearchButton = (props) => (
   <Button
@@ -35,25 +31,28 @@ class SearchBar extends React.Component {
     itemArray: [],
     itemTotal: 0,
     itemOffset: 0,
+    categoryID: '', // 281
+    sellerID: '', // leperfect
   };
 
-  componentDidUpdate() {
-    console.log('==');
-    console.log(this.state);
-  }
-
   handleSellerID = (e) => this.setState({ sellerID: e.target.value });
+  handleCategoryID = (categoryID) => this.setState({ categoryID });
   handleSearch = () => {
+    if (this.state.categoryID === '' || this.state.sellerID === '') {
+      console.log('No');
+      return;
+    }
+
     this.setState({
       isSearching: true,
       itemArray: [],
     });
-    const category_ids = '281';
+    const category_ids = this.state.categoryID;
 
     // Filter
     // { = %7B
     // } = %7D
-    const sellers = '%7Bleperfect%7D';
+    const sellers = `%7B${this.state.sellerID}%7D`;
     const deliveryPostalCode = '19713';
     const deliveryCountry = 'US';
     const buyingOptions = '%7BFIXED_PRICE%7D';
@@ -70,20 +69,35 @@ class SearchBar extends React.Component {
           },
         )
         .then((res) => {
-          this.props.handleItemTotal(res.data.total);
-          this.props.handleItemArray(res.data.itemSummaries);
-          this.setState({
-            itemArray: [...this.state.itemArray, ...res.data.itemSummaries],
-          });
-          if (
-            res.data.offset + res.data.itemSummaries.length <
-            res.data.total
-          ) {
-            search(res.data.offset + res.data.itemSummaries.length);
-          } else {
+          if (res.data.total === 0) {
             this.setState({
               isSearching: false,
             });
+          } else {
+            if (
+              res.data.offset + res.data.itemSummaries.length <
+              res.data.total
+            ) {
+              this.props.handleItemTotal(res.data.total);
+              this.props.handleItemArray([
+                ...this.state.itemArray,
+                ...res.data.itemSummaries,
+              ]);
+              this.setState({
+                itemArray: [...this.state.itemArray, ...res.data.itemSummaries],
+              });
+              search(res.data.offset + res.data.itemSummaries.length);
+            } else {
+              this.props.handleItemTotal(res.data.total);
+              this.props.handleItemArray([
+                ...this.state.itemArray,
+                ...res.data.itemSummaries,
+              ]);
+              this.setState({
+                itemArray: [...this.state.itemArray, ...res.data.itemSummaries],
+                isSearching: false,
+              });
+            }
           }
         })
         .catch((err) => {
@@ -106,7 +120,11 @@ class SearchBar extends React.Component {
             size="big"
           >
             <input />
-            <SettingButton />
+            <SettingButton
+              categoryID={this.state.categoryID}
+              handleCategoryID={this.handleCategoryID}
+              isSearching={this.state.isSearching}
+            />
             <SearchButton
               handleSearch={this.handleSearch}
               isSearching={this.state.isSearching}

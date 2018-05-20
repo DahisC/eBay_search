@@ -7,7 +7,7 @@ const Star = (props) => {
     return {
       width: '3px',
       height: '3px',
-      backgroundColor: 'yellow',
+      backgroundColor: 'Grey',
       borderRadius: '0%',
       position: 'absolute',
       top: `${Math.random() * 100}%`,

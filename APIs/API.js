@@ -4,6 +4,7 @@ const eBayBrowseAPI = require('./eBayBrowseAPI.js');
 const getSessionID = require('./getSessionID');
 const fetchToken = require('./fetchToken');
 const getOauthToken = require('./getOauthTokenAPI');
+const convertImage = require('./convertImage');
 
 // const eBayCategory = new Object({
 //     levelOne: () => eBayCategoryList.filter(category => category.CategoryLevel == 1),
@@ -19,5 +20,6 @@ module.exports = {
   getSessionID: () => getSessionID(),
   fetchToken: (sessionID) => fetchToken(sessionID),
   getOauthToken: (authCode) => getOauthToken(authCode),
+  convertImage: (itemArray) => convertImage(itemArray),
   // search: () => eBayBrowseAPI(),
 };
