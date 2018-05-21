@@ -3,8 +3,7 @@ import { Button, Icon } from 'semantic-ui-react';
 
 const ExportExcelButton = (props) => {
   const handleExportExcel = () => {
-    console.log(props.itemArray);
-    const filename = `T3EX-Orders @ ${new Date().getMonth() +
+    const filename = `eBay_searchBot @ ${new Date().getMonth() +
       new Date().getDay()}.xlsx`;
     const sheetKey = [
       'URL',
@@ -20,7 +19,7 @@ const ExportExcelButton = (props) => {
     props.itemArray.forEach((item) => {
       sheetArray.push([
         item.itemWebUrl,
-        item.itemId,
+        item.itemId.split('|')[1],
         item.image !== undefined
           ? item.image.imageUrl.split('l225')[0] + 'l500.jpg'
           : '',

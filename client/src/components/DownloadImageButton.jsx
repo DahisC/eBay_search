@@ -28,7 +28,6 @@ class DownloadImageButton extends React.Component {
         itemArray: this.props.itemArray,
       })
       .then((res) => {
-        console.log(res);
         downloadImage(res.data);
         this.setState({
           isLoading: false,

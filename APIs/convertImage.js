@@ -21,7 +21,6 @@ module.exports = (itemArray) => {
     function convert(arr) {
       arr.forEach((item) => {
         count += 1;
-        console.log(`現在進度：${count}`);
         if (item.image !== undefined) {
           base64Img.requestBase64(
             item.image.imageUrl.split('l225')[0] + 'l500.jpg',

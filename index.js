@@ -57,7 +57,6 @@ app.post('/api/getOauthToken', async (req, res) => {
 
 app.post('/api/convertImage', async (req, res) => {
   console.log('/api/convertImage');
-  console.log(req.body.itemArray.length);
   //console.log(req.body);
 
   try {
