@@ -38,7 +38,7 @@ const Home = (props) => {
         >
           <p style={{ color: 'grey' }}>
             <Icon name="search" /> eBay Search Bot
-            <span style={{ fontSize: '0.6em' }}> - ver. 2.0.0</span>
+            <span style={{ fontSize: '0.6em' }}> - ver. 2.0.1</span>
           </p>
           <p style={{ color: 'grey', textAlign: 'left' }}>
             <Icon name="facebook square" /> Swirling Cheng

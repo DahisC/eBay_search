@@ -13,6 +13,7 @@ class DownloadImageButton extends React.Component {
       isLoading: true,
     });
     const downloadImage = (itemArray) => {
+      console.log(`Res Length: ${itemArray.length}`);
       const zip = JSZip();
       itemArray.forEach((item) => {
         zip.file(`${item.itemId}.jpg`, item.base64, { base64: true });
